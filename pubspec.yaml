@@ -1,0 +1,55 @@
+name: pune_ganpati_darshan
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  url_launcher: ^6.3.2
+  image_picker: ^1.2.0
+  path: ^1.9.1
+  path_provider: ^2.1.5
+  google_maps_flutter: ^2.12.3
+  geolocator: ^14.0.2
+  flutter_native_splash: ^2.4.0
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^5.0.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/puned.jpg
+    - assets/mandals/kasba.jpeg
+    - assets/mandals/tambdi.jpeg
+    - assets/mandals/gurujitalim.jpeg
+    - assets/mandals/tulshibaug.jpeg
+    - assets/mandals/kesariwada.jpeg
+    - assets/mandals/dagdusheth.jpeg
+    - assets/mandals/rangari.jpeg
+    - assets/mandals/mandai.jpeg
+    - assets/icon/
+flutter_native_splash:
+  color: "#FFFFFF"        # Background color (white)
+  image: assets/icon/app_icon.png   # Splash me dikhne wala icon
+  android: true
+  ios: true
+
