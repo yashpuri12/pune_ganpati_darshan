@@ -46,7 +46,7 @@ flutter:
     - assets/mandals/dagdusheth.jpeg
     - assets/mandals/rangari.jpeg
     - assets/mandals/mandai.jpeg
-    - assets/icon/
+    - assets/icon/Ganesh2.png
 flutter_native_splash:
   color: "#FFFFFF"        # Background color (white)
   image: assets/icon/app_icon.png   # Splash me dikhne wala icon

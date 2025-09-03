@@ -111,7 +111,7 @@ class _ReportFormPageState extends State<ReportFormPage> {
                     Icon(Icons.campaign, color: Colors.white),
                     SizedBox(width: 10),
                     Expanded(child: Text(
-                      "Bheed me shanti banaye rakhein. Details sahi-sahi bharein — rescue team ko jaldi locate karne me help milegi.",
+                      "Maintain calm in the crowd. Fill in the details accurately — it will help the rescue team locate quickly.",
                       style: TextStyle(color: Colors.white, height: 1.3, fontWeight: FontWeight.w600),
                     )),
                   ],

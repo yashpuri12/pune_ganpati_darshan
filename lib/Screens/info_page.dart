@@ -9,9 +9,11 @@ class InfoPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: const [
-          Text("Pune Ganpati Rescue", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text("Pune Darshan ", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
           SizedBox(height: 8),
-          Text("Bheed me lost person reports, route guidance aur Lost & Found ke liye simple app."),
+          Text("By YASH PURI,PvgCOET,Pune", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8),
+          Text("A simple app for lost person reports, route guidance, and Lost & Found in the crowd."),
           SizedBox(height: 16),
           ListTile(
             leading: Icon(Icons.phone, color: Colors.deepOrange),
@@ -20,7 +22,7 @@ class InfoPage extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.shield, color: Colors.deepOrange),
             title: Text("Privacy"),
-            subtitle: Text("Submitted reports sirf rescue team tak pahunchte hain."),
+            subtitle: Text("Submitted reports reach only the rescue team."),
           ),
         ],
       ),

@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-
 import '../data/mandals.dart';
 import 'mandal_details_page.dart';
 import 'report_form.dart';
+import 'darshan_route_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -71,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        "Kisi family member ko bheed me dhundhna hai? Jaldi report bhejo.",
+                        "Need to find a family member in the crowd? Report quickly.",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
@@ -116,23 +115,45 @@ class _HomePageState extends State<HomePage> {
             spacing: 8,
             runSpacing: 8,
             children: const [
-              _InfoChip(icon: Icons.edit_note, text: "Details fill karo"),
-              _InfoChip(icon: Icons.call, text: "Team ko alert"),
-              _InfoChip(icon: Icons.volume_up, text: "Announcement hota hai"),
-              _InfoChip(icon: Icons.place, text: "Last-seen pe reach"),
+              _InfoChip(icon: Icons.edit_note, text: "Fill in the details✅"),
+              _InfoChip(icon: Icons.call, text: "Alert the team"),
             ],
           ),
+          const SizedBox(height: 20),
 
-          const SizedBox(height: 12),
-
-          _SectionCard(
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(12),
-              leading: const Icon(Icons.local_hospital, color: Colors.deepOrange),
-              title: const Text("Quick Helpline", style: TextStyle(fontWeight: FontWeight.w700)),
-              subtitle: const Text("Emergency number: 112"),
+          // 🚩 Start Darshan Route Button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrange,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: const BorderSide(color: Colors.white, width: 6), // ✅ White Border
+                ),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DarshanRoutePage()),
+                );
+              },
+              icon: Image.asset(
+                "assets/icon/Ganesh2.png", // ✅ tujhka diya hua path
+                width: 38,
+                height: 38,
+              ),
+              label: const Text(
+                "Start Pune Ganpati Darshan",
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+              ),
             ),
           ),
+
+
+
 
           const SizedBox(height: 12),
 
@@ -142,17 +163,17 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.info, color: Colors.deepOrange),
               title: Text("Important Tips", style: TextStyle(fontWeight: FontWeight.w700)),
               subtitle: Text(
-                "• Police booth par announce karen\n"
-                    "• Last-seen spot par rukkar wait karein\n"
-                    "• Phone line free rakhein\n"
-                    "• Bachchon ko naam/number yaad karayein",
+                "• Make an announcement at the police booth\n"
+                    "• Stop and wait at the last-seen spot\n"
+                    "• Keep the phone line free\n"
+                    "• Teach children to remember their name and   phone number",
               ),
             ),
           ),
 
           const SizedBox(height: 16),
 
-          // ================== Manacha Top 5 (Hero Section) ==================
+          // ================== Manacha Top 5 ==================
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
             child: Row(
@@ -160,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                 Icon(Icons.verified, color: Colors.deepOrange),
                 SizedBox(width: 8),
                 Text(
-                  "Manacha Pahila — Pachva",
+                  "Manache Pahile 5 Ganpati",
                   style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.w800),
                 ),
               ],
@@ -179,18 +200,6 @@ class _HomePageState extends State<HomePage> {
           // ---------------- Mandals Section ----------------
           Row(
             children: [
-              Icon(Icons.temple_hindu, color: orange),
-              const SizedBox(width: 8),
-              const Text(
-                "Pune Ganpati Mandals (2025)",
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16.5),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          Row(
-            children: [
               Expanded(
                 child: TextField(
                   onChanged: (v) => setState(() => _query = v),
@@ -207,26 +216,38 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(width: 10),
-              PopupMenuButton<String>(
-                initialValue: _areaFilter,
-                onSelected: (v) => setState(() => _areaFilter = v),
-                itemBuilder: (_) =>
-                    _areas.map((e) => PopupMenuItem(value: e, child: Text(e))).toList(),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  decoration:
-                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.filter_list, color: Colors.deepOrange),
-                      const SizedBox(width: 6),
-                      Text(_areaFilter, style: const TextStyle(fontWeight: FontWeight.w600)),
-                    ],
+              Flexible(
+                child: PopupMenuButton<String>(
+                  initialValue: _areaFilter,
+                  onSelected: (v) => setState(() => _areaFilter = v),
+                  itemBuilder: (_) =>
+                      _areas.map((e) => PopupMenuItem(value: e, child: Text(e))).toList(),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.filter_list, color: Colors.deepOrange),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            _areaFilter,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
+
           const SizedBox(height: 8),
 
           if (_filtered.isEmpty)
@@ -310,7 +331,7 @@ class _MandalCard extends StatelessWidget {
       backgroundColor: Color(0xFFFFE0B2),
       child: Icon(Icons.temple_hindu, color: Colors.deepOrange),
     );
-    final tag = mandal.name; // unique hero tag
+    final tag = mandal.name;
 
     if (assetPath == null) {
       return Hero(tag: tag, child: placeholder);
@@ -331,7 +352,7 @@ class _MandalCard extends StatelessWidget {
   }
 }
 
-// ================== Manacha Top 5 (2 columns grid) ==================
+// ================== Manacha Top 5 ==================
 class ManachaTopFive extends StatelessWidget {
   final void Function(Mandal) onTapMandal;
   const ManachaTopFive({super.key, required this.onTapMandal});
@@ -345,7 +366,6 @@ class ManachaTopFive extends StatelessWidget {
 
     if (top5.isEmpty) return const SizedBox.shrink();
 
-    // 2 columns: (screenW - horizontal padding*2 - gap) / 2
     final screenW = MediaQuery.of(context).size.width;
     final cardW = (screenW - 16 * 2 - 12) / 2;
 
@@ -377,30 +397,33 @@ class _ManachaCard extends StatelessWidget {
     required this.onTap,
   });
 
-  Color _rankColor(int r) {
+  String _rankLabel(int r) {
     switch (r) {
       case 1:
-        return const Color(0xFFFFC107); // gold
+        return "Pahila Manacha Ganpati";
       case 2:
-        return const Color(0xFFB0BEC5); // silver
+        return "Dusra Manacha Ganpati";
       case 3:
-        return const Color(0xFFCD7F32); // bronze
+        return "Tisra Manacha Ganpati";
+      case 4:
+        return "Chautha Manacha Ganpati";
+      case 5:
+        return "Pachava Manacha Ganpati";
       default:
-        return Colors.deepOrange;
+        return "Manacha Ganpati";
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final r = mandal.manachaRank ?? 0;
-    final pillBg = Colors.white.withOpacity(.15);
 
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,
       child: Container(
         width: width,
-        height: 130, // compact height to avoid overflow
+        height: 140,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
@@ -416,83 +439,29 @@ class _ManachaCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Stack(
-          children: [
-            // rank badge
-            Positioned(
-              right: 8,
-              top: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: _rankColor(r),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  r > 0 ? "Manacha $r" : "Manacha",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 10.5,
-                  ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: _thumb(mandal.image),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _rankLabel(r),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 14,
                 ),
               ),
-            ),
-
-            // contenta
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Row(
-                children: [
-                  // thumbnail (safe placeholder)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: _thumb(mandal.image),
-                  ),
-                  const SizedBox(width: 10),
-                  // text + pills
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          mandal.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 14,
-                            height: 1.1,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          mandal.area,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(.9),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 11.5,
-                          ),
-                        ),
-                        const Spacer(),
-                        Wrap(
-                          spacing: 6,
-                          runSpacing: 6,
-                          children: [
-                            _miniPill(Icons.login, "Entry", mandal.entry, pillBg),
-                            _miniPill(Icons.schedule, "", mandal.timings, pillBg),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -512,35 +481,6 @@ class _ManachaCard extends StatelessWidget {
       height: 60,
       fit: BoxFit.cover,
       errorBuilder: (_, __, ___) => SizedBox(width: 60, height: 60, child: placeholder),
-    );
-  }
-
-  Widget _miniPill(IconData icon, String label, String value, Color bg) {
-    final text = label.isEmpty ? value : "$label: $value";
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(9),
-        border: Border.all(color: Colors.white.withOpacity(.2)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: Colors.white),
-          const SizedBox(width: 4),
-          Text(
-            text,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 11.5,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
