@@ -1,249 +1,381 @@
+// lib/screens/report_form.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ReportFormPage extends StatefulWidget {
   const ReportFormPage({super.key});
+
   @override
   State<ReportFormPage> createState() => _ReportFormPageState();
 }
 
 class _ReportFormPageState extends State<ReportFormPage> {
   final _formKey = GlobalKey<FormState>();
-  final nameC = TextEditingController();
-  final ageC = TextEditingController();
-  final guardianPhoneC = TextEditingController();
-  final clothesC = TextEditingController();
-  final descC = TextEditingController();
+  final _nameC = TextEditingController();
+  final _ageC = TextEditingController();
+  final _contactC = TextEditingController();
+  final _lastSeenC = TextEditingController();
+  final _aadhaarC = TextEditingController();
+  final _idNoC = TextEditingController();
+  final _notesC = TextEditingController();
 
-  String? lastSeenAt;
-  File? photoFile;
-  bool sending = false;
+  String _gender = 'Male';
+  String _idType = 'Aadhaar';
+  DateTime? _lastSeenDateTime;
+  File? _photo;
+  final _picker = ImagePicker();
 
-  final lastSeenOptions = const [
-    "Dagadusheth Halwai Ganpati","Kasba Ganpati","Tulshibaug Ganpati","Shreemant Bhausaheb Rangari",
-    "Akhil Mandai","Jangli Maharaj Road","FC Road","Swargate",
-  ];
+  Future<void> _pickPhoto(ImageSource src) async {
+    final x = await _picker.pickImage(source: src, imageQuality: 70);
+    if (x == null) return;
+    setState(() => _photo = File(x.path));
+  }
+
+  Future<void> _pickDateTime() async {
+    final now = DateTime.now();
+    final d = await showDatePicker(
+      context: context,
+      initialDate: _lastSeenDateTime ?? now,
+      firstDate: DateTime(now.year - 5),
+      lastDate: now,
+    );
+    if (d == null) return;
+    final t = await showTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(now));
+    if (t == null) return;
+    setState(() => _lastSeenDateTime = DateTime(d.year, d.month, d.day, t.hour, t.minute));
+  }
+
+  bool _validateAadhaar(String v) {
+    final s = v.replaceAll(RegExp(r'\s+'), '');
+    return RegExp(r'^[2-9]\d{11}$').hasMatch(s);
+  }
+
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+
+    final data = {
+      "name": _nameC.text.trim(),
+      "age": _ageC.text.trim(),
+      "gender": _gender,
+      "contact": _contactC.text.trim(),
+      "lastSeen": _lastSeenC.text.trim(),
+      "lastSeenAt": _lastSeenDateTime?.toIso8601String() ?? '',
+      "aadhaar": _aadhaarC.text.trim(),
+      "idType": _idType,
+      "idNumber": _idNoC.text.trim(),
+      "notes": _notesC.text.trim(),
+      "photoPath": _photo?.path ?? '',
+      "reportedAt": DateTime.now().toIso8601String(),
+    };
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Report submitted — team will contact you soon.")),
+    );
+
+    // debug print
+    // ignore: avoid_print
+    print("Missing person report submitted: $data");
+
+    Navigator.pop(context, data);
+  }
 
   @override
-  void dispose() { nameC.dispose(); ageC.dispose(); guardianPhoneC.dispose(); clothesC.dispose(); descC.dispose(); super.dispose(); }
-
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final x = await ImagePicker().pickImage(source: source, imageQuality: 70);
-      if (x == null) return;
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File(x.path);
-      final saveAs = File(p.join(dir.path, "missing_${DateTime.now().millisecondsSinceEpoch}${p.extension(x.path)}"));
-      await file.copy(saveAs.path);
-      setState(() => photoFile = saveAs);
-    } on PlatformException {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Camera/Gallery permission needed")));
-    }
+  void dispose() {
+    _nameC.dispose();
+    _ageC.dispose();
+    _contactC.dispose();
+    _lastSeenC.dispose();
+    _aadhaarC.dispose();
+    _idNoC.dispose();
+    _notesC.dispose();
+    super.dispose();
   }
 
-  Future<void> _callHelpline() async {
-    final uri = Uri.parse("tel:+91112");
-    if (!await launchUrl(uri)) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Cannot open dialer")));
-    }
+  InputDecoration _inputDecor({required String label, IconData? icon}) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: icon != null ? Icon(icon) : null,
+      filled: true,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+    );
   }
-
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => sending = true);
-    await Future.delayed(const Duration(seconds: 1));
-    setState(() => sending = false);
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Report sent to Rescue Team ✅")));
-    Navigator.pop(context);
-  }
-
-  Widget _sectionTitle(String title, {IconData? icon}) => Padding(
-    padding: const EdgeInsets.only(top: 6, bottom: 10),
-    child: Row(children: [
-      if (icon != null)
-        Container(decoration: BoxDecoration(color: Colors.orange.shade100, borderRadius: BorderRadius.circular(10)),
-            padding: const EdgeInsets.all(8), child: Icon(icon, color: Colors.deepOrange)),
-      if (icon != null) const SizedBox(width: 10),
-      Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16.5, letterSpacing: .3)),
-    ]),
-  );
-
-  Widget _card(Widget child) => Container(
-    margin: const EdgeInsets.only(bottom: 14),
-    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(.04), blurRadius: 10, offset: const Offset(0, 6))]),
-    padding: const EdgeInsets.all(14), child: child,
-  );
 
   @override
   Widget build(BuildContext context) {
     final orange = Colors.deepOrange;
+    final mq = MediaQuery.of(context);
+    final avatarSize = (mq.size.width * 0.14).clamp(44.0, 68.0);
+    final bottomInset = mq.viewInsets.bottom;
+
+    // DEBUG: uncomment if you want to see actual width in console
+    // print('SCREEN WIDTH: ${mq.size.width}');
+
     return Scaffold(
-      backgroundColor: Colors.orange.shade50,
       appBar: AppBar(
         title: const Text("Report Missing Person"),
         backgroundColor: orange,
-        actions: [ IconButton(tooltip: "Emergency Helpline (112)", onPressed: _callHelpline, icon: const Icon(Icons.call)) ],
+        elevation: 0,
       ),
+      backgroundColor: Colors.orange.shade50,
       body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [orange, orange.withOpacity(.8)], begin: Alignment.centerLeft, end: Alignment.centerRight),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                padding: const EdgeInsets.all(14),
-                child: const Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.campaign, color: Colors.white),
-                    SizedBox(width: 10),
-                    Expanded(child: Text(
-                      "Maintain calm in the crowd. Fill in the details accurately — it will help the rescue team locate quickly.",
-                      style: TextStyle(color: Colors.white, height: 1.3, fontWeight: FontWeight.w600),
-                    )),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 14),
-
-              _card(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _sectionTitle("Person Details", icon: Icons.person),
-                  Row(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(16, 18, 16, 18 + bottomInset),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                // PHOTO ROW
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.04), blurRadius: 10)],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.orange.shade100,
-                        backgroundImage: photoFile != null ? FileImage(photoFile!) : null,
-                        child: photoFile == null ? const Icon(Icons.person, size: 40, color: Colors.deepOrange) : null,
+                      Container(
+                        width: avatarSize,
+                        height: avatarSize,
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade50,
+                          shape: BoxShape.circle,
+                          image: _photo != null ? DecorationImage(image: FileImage(_photo!), fit: BoxFit.cover) : null,
+                        ),
+                        child: _photo == null
+                            ? Icon(Icons.person_search, size: avatarSize * 0.55, color: orange)
+                            : null,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Wrap(
-                          spacing: 8, runSpacing: 8,
+                          spacing: 8,
+                          runSpacing: 8,
                           children: [
                             OutlinedButton.icon(
-                              style: OutlinedButton.styleFrom(foregroundColor: orange, side: BorderSide(color: orange)),
-                              onPressed: () => _pickImage(ImageSource.camera),
-                              icon: const Icon(Icons.photo_camera), label: const Text("Camera"),
+                              onPressed: () => _pickPhoto(ImageSource.camera),
+                              icon: const Icon(Icons.camera_alt_outlined),
+                              label: const Text("Camera"),
+                              style: OutlinedButton.styleFrom(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                              ),
                             ),
                             OutlinedButton.icon(
-                              style: OutlinedButton.styleFrom(foregroundColor: orange, side: BorderSide(color: orange)),
-                              onPressed: () => _pickImage(ImageSource.gallery),
-                              icon: const Icon(Icons.photo_library), label: const Text("Gallery"),
+                              onPressed: () => _pickPhoto(ImageSource.gallery),
+                              icon: const Icon(Icons.photo_library_outlined),
+                              label: const Text("Gallery"),
+                              style: OutlinedButton.styleFrom(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                              ),
                             ),
+                            if (_photo != null)
+                              TextButton.icon(
+                                onPressed: () => setState(() => _photo = null),
+                                icon: const Icon(Icons.delete_outline),
+                                label: const Text("Remove"),
+                              ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: nameC,
-                    decoration: const InputDecoration(labelText: "Full Name", prefixIcon: Icon(Icons.badge_outlined), filled: true),
-                    validator: (v) => (v == null || v.trim().isEmpty) ? "Enter name" : null,
-                  ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: ageC,
-                    decoration: const InputDecoration(labelText: "Age", prefixIcon: Icon(Icons.calendar_month), filled: true),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) return "Enter age";
-                      final n = int.tryParse(v);
-                      if (n == null || n <= 0 || n > 120) return "Enter valid age";
-                      return null;
-                    },
-                  ),
-                ],
-              )),
-
-              _card(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _sectionTitle("Contact & Last Seen", icon: Icons.place),
-                  TextFormField(
-                    controller: guardianPhoneC, maxLength: 10,
-                    decoration: const InputDecoration(
-                      labelText: "Family Contact Number", prefixText: "+91 ", counterText: "",
-                      prefixIcon: Icon(Icons.phone), filled: true,
-                    ),
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) return "Enter contact number";
-                      if (v.trim().length != 10) return "Enter 10-digit number";
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    value: lastSeenAt,
-                    items: lastSeenOptions.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                    onChanged: (v) => setState(() => lastSeenAt = v),
-                    decoration: const InputDecoration(labelText: "Last Seen At", prefixIcon: Icon(Icons.route), filled: true),
-                    validator: (v) => v == null ? "Select last seen location" : null,
-                  ),
-                ],
-              )),
-
-              _card(Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _sectionTitle("Appearance", icon: Icons.checkroom),
-                  TextFormField(
-                    controller: clothesC,
-                    decoration: const InputDecoration(
-                      labelText: "Clothes Description", hintText: "e.g., Blue T-shirt, black jeans, white shoes",
-                      prefixIcon: Icon(Icons.checkroom), filled: true,
-                    ),
-                    validator: (v) => (v == null || v.trim().isEmpty) ? "Enter clothes description" : null,
-                  ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: descC, maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: "Identifying Marks / Details",
-                      hintText: "e.g., Height ~5'7\", specs, wrist band, mole on right cheek",
-                      prefixIcon: Icon(Icons.info_outline), filled: true,
-                    ),
-                  ),
-                ],
-              )),
-
-              const SizedBox(height: 6),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: orange,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    elevation: 3,
-                  ),
-                  onPressed: sending ? null : _submit,
-                  icon: sending
-                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)))
-                      : const Icon(Icons.send_rounded),
-                  label: Text(sending ? "Sending..." : "Send to Rescue Team", style: const TextStyle(fontWeight: FontWeight.w700, letterSpacing: .2)),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 14),
+
+                // MAIN CARD
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(.04), blurRadius: 12)],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Full name
+                      TextFormField(
+                        controller: _nameC,
+                        textInputAction: TextInputAction.next,
+                        decoration: _inputDecor(label: "Full name", icon: Icons.person),
+                        validator: (v) => (v ?? '').trim().isEmpty ? "Please enter name" : null,
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Age + Gender using Row + Expanded (prevents overflow)
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: TextFormField(
+                              controller: _ageC,
+                              keyboardType: TextInputType.number,
+                              decoration: _inputDecor(label: "Age", icon: Icons.calendar_today),
+                              validator: (v) {
+                                final s = (v ?? '').trim();
+                                if (s.isEmpty) return "Enter age";
+                                if (int.tryParse(s) == null) return "Invalid age";
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            flex: 3,
+                            child: DropdownButtonFormField<String>(
+                              value: _gender,
+                              isExpanded: true,
+                              decoration: _inputDecor(label: "Gender", icon: Icons.transgender),
+                              items: const [
+                                DropdownMenuItem(value: "Male", child: Text("Male")),
+                                DropdownMenuItem(value: "Female", child: Text("Female")),
+                                DropdownMenuItem(value: "Other", child: Text("Other")),
+                              ],
+                              onChanged: (v) => setState(() => _gender = v ?? "Male"),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Contact
+                      TextFormField(
+                        controller: _contactC,
+                        keyboardType: TextInputType.phone,
+                        textInputAction: TextInputAction.next,
+                        decoration: _inputDecor(label: "Contact number (for family)", icon: Icons.phone),
+                        validator: (v) {
+                          final s = (v ?? '').trim();
+                          if (s.isEmpty) return "Enter contact";
+                          if (!RegExp(r'^\+?\d{7,15}$').hasMatch(s)) return "Invalid phone";
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Last seen place
+                      TextFormField(
+                        controller: _lastSeenC,
+                        decoration: _inputDecor(label: "Last seen (place/area)", icon: Icons.place),
+                        validator: (v) => (v ?? '').trim().isEmpty ? "Enter last seen place" : null,
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Date/time picker button
+                      OutlinedButton.icon(
+                        onPressed: _pickDateTime,
+                        icon: const Icon(Icons.access_time_outlined),
+                        label: Text(_lastSeenDateTime == null
+                            ? "Pick date & time"
+                            : "${_lastSeenDateTime!.day}/${_lastSeenDateTime!.month}/${_lastSeenDateTime!.year} ${_lastSeenDateTime!.hour.toString().padLeft(2, '0')}:${_lastSeenDateTime!.minute.toString().padLeft(2, '0')}"),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.grey.shade200),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          foregroundColor: Colors.black87,
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Aadhaar field (optional)
+                      TextFormField(
+                        controller: _aadhaarC,
+                        keyboardType: TextInputType.number,
+                        decoration: _inputDecor(label: "Aadhaar number (optional)", icon: Icons.credit_card),
+                        validator: (v) {
+                          final s = (v ?? '').trim();
+                          if (s.isEmpty) return null;
+                          if (!_validateAadhaar(s)) return "Invalid Aadhaar";
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // ID Type + ID Number: responsive Row with Expanded
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: DropdownButtonFormField<String>(
+                              value: _idType,
+                              isExpanded: true,
+                              decoration: _inputDecor(label: "ID Type", icon: Icons.badge_outlined),
+                              items: const [
+                                DropdownMenuItem(value: "Aadhaar", child: Text("Aadhaar")),
+                                DropdownMenuItem(value: "Voter ID", child: Text("Voter ID")),
+                                DropdownMenuItem(value: "Driving License", child: Text("Driving License")),
+                                DropdownMenuItem(value: "Passport", child: Text("Passport")),
+                                DropdownMenuItem(value: "Other", child: Text("Other")),
+                              ],
+                              onChanged: (v) => setState(() => _idType = v ?? "Aadhaar"),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            flex: 3,
+                            child: TextFormField(
+                              controller: _idNoC,
+                              decoration: _inputDecor(label: "ID number", icon: Icons.description_outlined),
+                              validator: (v) {
+                                final s = (v ?? '').trim();
+                                if (s.isEmpty) return null;
+                                if (s.length < 3) return "Too short";
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // Additional notes
+                      TextFormField(
+                        controller: _notesC,
+                        maxLines: 4,
+                        decoration: _inputDecor(label: "Additional details / identification marks", icon: Icons.note_outlined),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Submit button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _submit,
+                          icon: const Icon(Icons.send_rounded),
+                          label: const Text("Submit Report", style: TextStyle(fontWeight: FontWeight.w700)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: orange,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            elevation: 4,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                Text("Provide accurate details — team will contact you soon.", style: TextStyle(color: Colors.grey.shade700), textAlign: TextAlign.center),
+              ],
+            ),
           ),
         ),
       ),

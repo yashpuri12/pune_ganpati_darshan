@@ -20,8 +20,14 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
-      setState(() {}); // tab change hone pe UI update
+      if (mounted) setState(() {}); // tab change hone pe UI update
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<File?> _pickAndPersist(ImageSource source) async {
@@ -53,11 +59,15 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
               bottom: 16 + MediaQuery.of(ctx).viewInsets.bottom),
           child: SingleChildScrollView(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Text(isLost ? "➕ Report Lost Item" : "➕ Report Found Item",
-                  style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepOrange)),
+              // Title color changes depending on lost/found
+              Text(
+                isLost ? "➕ Report Lost Item" : "➕ Report Found Item",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isLost ? Colors.red : Colors.green,
+                ),
+              ),
               const SizedBox(height: 16),
               Row(children: [
                 CircleAvatar(
@@ -65,8 +75,7 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
                   backgroundColor: Colors.orange.shade100,
                   backgroundImage: photo != null ? FileImage(photo!) : null,
                   child: photo == null
-                      ? const Icon(Icons.image,
-                      size: 36, color: Colors.deepOrange)
+                      ? Icon(Icons.image, size: 36, color: isLost ? Colors.red : Colors.green)
                       : null,
                 ),
                 const SizedBox(width: 12),
@@ -117,7 +126,7 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepOrange,
+                        backgroundColor: isLost ? Colors.red : Colors.green,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12))),
@@ -139,7 +148,9 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
                       });
                       Navigator.pop(ctx);
                     },
-                    child: Text(isLost ? "Add Lost" : "Add Found"),
+                    child: Text(isLost ? "Add Lost" : "Add Found",
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   )),
             ]),
           ),
@@ -153,8 +164,7 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
         context: context,
         builder: (_) => Dialog(
           insetPadding: const EdgeInsets.all(16),
-          child: InteractiveViewer(
-              child: Image.file(File(path), fit: BoxFit.contain)),
+          child: InteractiveViewer(child: Image.file(File(path), fit: BoxFit.contain)),
         ));
   }
 
@@ -171,6 +181,7 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
           controller: _tabController,
           indicator: const BoxDecoration(), // underline hata diya
           tabs: [
+            // Each tab has white border and bold text
             _tabBox("📕 Lost", active: _tabController.index == 0, colors: [Colors.red, Colors.redAccent]),
             _tabBox("📗 Found", active: _tabController.index == 1, colors: [Colors.green, Colors.teal]),
           ],
@@ -189,6 +200,7 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
               ? const LinearGradient(colors: [Colors.red, Colors.redAccent])
               : const LinearGradient(colors: [Colors.green, Colors.teal]),
           borderRadius: BorderRadius.circular(30),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 8)],
         ),
         child: FloatingActionButton.extended(
           backgroundColor: Colors.transparent,
@@ -197,7 +209,7 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
           icon: const Icon(Icons.add, color: Colors.white),
           label: Text(
             isLostTab ? "Add Lost" : "Add Found",
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -207,15 +219,17 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
   Widget _tabBox(String text, {required bool active, required List<Color> colors}) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
       decoration: BoxDecoration(
         gradient: active ? LinearGradient(colors: colors) : null,
-        color: active ? null : Colors.white.withOpacity(0.2),
+        color: active ? null : Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white, width: 1.2), // white border
       ),
       child: Text(
         text,
         style: TextStyle(
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.bold, // bold text
           color: active ? Colors.white : Colors.white70,
         ),
       ),
@@ -233,9 +247,7 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
               const SizedBox(height: 8),
               Text(isLost ? "No lost items yet." : "No found items yet.",
                   style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey)),
+                      fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey)),
             ],
           ));
     }
@@ -249,25 +261,17 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: isLost
-                  ? [Colors.red.shade50, Colors.white]
-                  : [Colors.green.shade50, Colors.white],
+              colors: isLost ? [Colors.red.shade50, Colors.white] : [Colors.green.shade50, Colors.white],
             ),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-                color: isLost ? Colors.redAccent : Colors.green, width: 1.5),
+            border: Border.all(color: isLost ? Colors.redAccent : Colors.green, width: 1.5),
             boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3))
+              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 3))
             ],
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.all(12),
-            leading: (img != null &&
-                img.isNotEmpty &&
-                File(img).existsSync())
+            leading: (img != null && img.isNotEmpty && File(img).existsSync())
                 ? GestureDetector(
               onTap: () => _openImageViewer(img),
               child: ClipRRect(
@@ -276,8 +280,7 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                    const Icon(Icons.broken_image, size: 40)),
+                    errorBuilder: (_, __, ___) => const Icon(Icons.broken_image, size: 40)),
               ),
             )
                 : Icon(
@@ -286,8 +289,7 @@ class _LostFoundPageState extends State<LostFoundPage> with SingleTickerProvider
               size: 40,
             ),
             title: Text(it["title"] ?? "",
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 16)),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             subtitle: Text(
               "${it["place"] ?? ""}${(it["phone"] ?? "").isNotEmpty ? "\n☎ ${it["phone"]}" : ""}",
               style: const TextStyle(fontStyle: FontStyle.italic, height: 1.4),

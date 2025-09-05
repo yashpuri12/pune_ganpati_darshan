@@ -35,7 +35,7 @@ class Mandal {
 }
 
 // ================= MASTER LIST =================
-// Abhi ke liye 16 Mandals added hai.
+// Abhi ke liye 24 Mandals added hai.
 // Aage jitne bhi naye buildings / mandals add karne ho
 // sirf niche list me copy-paste style se add karo.
 
@@ -50,7 +50,7 @@ const List<Mandal> kMandals = [
     exit: "Kasba Peth West",
     timings: "6:00 AM – 12:00 AM",
     image: 'assets/mandals/kasba.jpeg',
-    year2025: "Procession 9 AM",
+    year2025: "Ballaleshwar Temple",
     history: "City’s Gram Daivat; Jijabai Bhosale ne sthapna ki.",
     speciality: "Simple traditional idol; first in immersion.",
     description: "Pune ka Gramdaivat. Manacha Pahila Ganpati jahan se visarjan shuru hota hai.",
@@ -105,8 +105,8 @@ const List<Mandal> kMandals = [
     history: "Since 1901.",
     speciality: "13–15 ft idol; silver & fiberglass work.",
     description: "Sabse bada idol jo Tulshibaug ke bazaar me sthit hai.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5149,
+    lng: 73.8530,
   ),
 
   Mandal(
@@ -122,8 +122,8 @@ const List<Mandal> kMandals = [
     history: "Tilak ne 1893 me public Ganeshotsav yahin se shuru kiya.",
     speciality: "Tilak legacy; palkhi traditions.",
     description: "Bal Gangadhar Tilak ke Kesariwada se Lokmanya ne public Ganeshotsav ki shuruaat ki thi.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5192,
+    lng: 73.8570,
   ),
 
   // ---------- Famous Ganpati ----------
@@ -145,18 +145,18 @@ const List<Mandal> kMandals = [
 
   Mandal(
     name: "Shrimant Bhausaheb Rangari Ganpati",
-    area: "Budhwar Peth",
+    area: "Kasba Peth",
     tag: "Famous",
     entry: "Rangari Bhavan Lane",
-    exit: "Budhwar Peth Chowk",
+    exit: "Kasba Peth Chowk",
     timings: "6:00 AM – 12:00 AM",
     image: 'assets/mandals/rangari.jpeg',
     year2025: "Original historical idol",
     history: "India ka pehla public Ganpati Utsav (1892).",
     speciality: "Ganpati asur ko maarte hue — sahas ka prateek.",
     description: "Sabse pehla public Ganpati jo freedom struggle ke dauran sthapit hua tha.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5190,
+    lng: 73.8565,
   ),
 
   Mandal(
@@ -187,8 +187,8 @@ const List<Mandal> kMandals = [
     history: "Grand lighting & crowds.",
     speciality: "Lighting aur grandeur ke liye prasiddh.",
     description: "Lighting aur decoration ke liye prasiddh Ganpati jo Sadashiv Peth me sthit hai.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5159,
+    lng: 73.8540,
   ),
 
   // ---------- Additional Famous (8 mandals) ----------
@@ -208,7 +208,7 @@ const List<Mandal> kMandals = [
 
   Mandal(
     name: "Shaniwar Mandal",
-    area: "Sadashiv Peth",
+    area: "Shaniwar Peth",
     tag: "Famous",
     entry: "Shaniwar Peth Junction",
     exit: "River Bank Lane",
@@ -216,8 +216,8 @@ const List<Mandal> kMandals = [
     image: null,
     year2025: "Traditional immersion dindi",
     description: "Shaniwar Wada aur parivarik itihaas se juda hua mandal.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5195,
+    lng: 73.8560,
   ),
 
   Mandal(
@@ -230,8 +230,8 @@ const List<Mandal> kMandals = [
     image: null,
     year2025: "Community programs",
     description: "Local community ke cultural aur social programs ke liye mashhoor.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5198,
+    lng: 73.8562,
   ),
 
   Mandal(
@@ -244,37 +244,24 @@ const List<Mandal> kMandals = [
     image: null,
     year2025: "Historic tribute events",
     description: "Freedom fighter Babu Genu ki yaad me sthapit, itihaasik mahatva rakhta hai.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5178,
+    lng: 73.8563,
   ),
 
   Mandal(
     name: "Hatti Ganpati Mandal",
-    area: "Sadashiv Peth",
+    area: "Sahitya Parishad / Laxmi Road area",
     tag: "Famous",
     entry: "Perugate",
     exit: "Sadashiv Peth Lane",
     timings: "6:30 AM – 11:00 PM",
-    image: null,
+    image: 'assets/mandals/hatti.jpeg',
     year2025: "Traditional aarti",
     description: "Hatti Ganpati apni traditional pooja aur bhajan sandhya ke liye prasiddh hai.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5160,
+    lng: 73.8560,
   ),
 
-  Mandal(
-    name: "Sharada Gajanan Mandal",
-    area: "Mandai",
-    tag: "Famous",
-    entry: "Mandai Inner Gate",
-    exit: "Mandai Outer Gate",
-    timings: "6:30 AM – 11:00 PM",
-    image: null,
-    year2025: "Cultural stages",
-    description: "Sharada devi aur Ganesh idol ka sangam, sanskrutik karyakram yahan hote hain.",
-    lat: 18.52043,
-    lng: 73.85674,
-  ),
 
   Mandal(
     name: "Hirabaug Mitra Mandal",
@@ -286,8 +273,8 @@ const List<Mandal> kMandals = [
     image: null,
     year2025: "Thematic decor",
     description: "Thematic decoration aur alag idol design ke liye prasiddh.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5202,
+    lng: 73.8566,
   ),
 
   Mandal(
@@ -300,8 +287,121 @@ const List<Mandal> kMandals = [
     image: null,
     year2025: "Queue mgmt upgrades",
     description: "Kothrud ka prasiddh Ganpati, acchi queue management aur seva karyakram ke liye jaana jata hai.",
-    lat: 18.52043,
-    lng: 73.85674,
+    lat: 18.5040,
+    lng: 73.8280,
+  ),
+
+  // ---------- ROUTE-SPECIFIC / MISSING Ganpatis ADDED ----------
+  Mandal(
+    name: "Saneguruji Mandal (Mahalaxmi)",
+    area: "Dandekar Bridge",
+    tag: "Other",
+    entry: "Near Dandekar Bridge",
+    exit: "Mahalaxmi Road",
+    timings: "6:00 AM – 11:00 PM",
+    image: 'assets/mandals/saneguruji.jpeg',
+    year2025: "Small cultural programs",
+    history: "Local neighborhood mandal, traditional celebrations.",
+    speciality: "Community bhajans & small processions.",
+    description: "Mahalaxmi area ke paas; bike se aaram se visit ho sakta hai.",
+    lat: 18.5186,
+    lng: 73.8558,
+  ),
+
+  Mandal(
+    name: "Garud Ganpati",
+    area: "Laxmi Road (near Alka Talkies)",
+    tag: "Other",
+    entry: "Laxmi Road Entrance",
+    exit: "Alka Talkies Lane",
+    timings: "6:00 AM – 11:30 PM",
+    image: 'assets/mandals/garud.jpeg',
+    year2025: "Local street decor",
+    history: "Chhota par popular mandal Laxmi Road par.",
+    speciality: "Rapid darshan; morning crowd heavy.",
+    description: "Laxmi Road ke nazdeek, shopping route par sthit mandal.",
+    lat: 18.5175,
+    lng: 73.8570,
+  ),
+
+  Mandal(
+    name: "Mati Ganpati",
+    area: "Narayan Peth",
+    tag: "Other",
+    entry: "Narayan Peth Gate",
+    exit: "Gondya Ala Re Lane",
+    timings: "6:00 AM – 11:30 PM",
+    image: 'assets/mandals/mati.jpeg',
+    year2025: "Folk performances",
+    history: "Local mandal known for clay (mati) themed decor.",
+    speciality: "Clay based theme & eco-friendly idol.",
+    description: "Narayan Peth me sthit; ground-level cultural activities.",
+    lat: 18.5127,
+    lng: 73.8551,
+  ),
+
+  Mandal(
+    name: "Bholenath Mitra Mandal",
+    area: "Kesari Wada (in front of Kesari Wada)",
+    tag: "Other",
+    entry: "Kesari Wada Front",
+    exit: "Kesari Lane",
+    timings: "6:00 AM – 11:30 PM",
+    image: 'assets/mandals/bholenath.jpeg',
+    year2025: "Kirtan & palkhi",
+    history: "Local mitra mandal with traditional processions.",
+    speciality: "Strong devotional kirtan sessions.",
+    description: "Kesari Wada ke samne; Tilak tradition se juda mandal.",
+    lat: 18.5190,
+    lng: 73.8568,
+  ),
+
+  Mandal(
+    name: "Munjabacha Bol Mandal",
+    area: "Narayan Peth",
+    tag: "Other",
+    entry: "Narayan Peth Main",
+    exit: "Sant Dnyaneshwar Road",
+    timings: "6:00 AM – 11:00 PM",
+    image: 'assets/mandals/munjabacha.jpeg',
+    year2025: "Local devotional groups",
+    history: "Famous among local crowds for bhajan schedule.",
+    speciality: "Energetic bhajan & community seva.",
+    description: "Narayan Peth ka popular mandal; walking route me aasani se cover hota hai.",
+    lat: 18.5139,
+    lng: 73.8548,
+  ),
+
+  Mandal(
+    name: "Jilbya Maruti Ganpati",
+    area: "Tulshibaug area",
+    tag: "Other",
+    entry: "Near Tulshibaug Market",
+    exit: "12 Jyotirlingas Lane",
+    timings: "6:00 AM – 11:30 PM",
+    image: 'assets/mandals/jilbya.jpeg',
+    year2025: "Small ensemble shows",
+    history: "Local deity with strong devotees from market community.",
+    speciality: "Maruti stuti & local aarti.",
+    description: "Tulshibaug ke aaspas, small but lively mandal.",
+    lat: 18.5149,
+    lng: 73.8532,
+  ),
+
+  Mandal(
+    name: "Shanipar Trust / Jalmay Dwarka",
+    area: "Tulshibaug vicinity",
+    tag: "Other",
+    entry: "Shanipar Lane",
+    exit: "Jalmay Dwarka Path",
+    timings: "6:00 AM – 11:00 PM",
+    image: 'assets/mandals/shanipar.jpeg',
+    year2025: "Community seva stalls",
+    history: "Trust-run mandal focusing on charity and service.",
+    speciality: "Community kitchen & help desks.",
+    description: "Tulshibaug ke paas; seva aur support facilities available.",
+    lat: 18.5151,
+    lng: 73.8525,
   ),
 
   // ---------- TODO: Add More Buildings / Mandals ----------
